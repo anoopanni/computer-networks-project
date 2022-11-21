@@ -1,6 +1,8 @@
 #include <sys/socket.h>
 #include <stdio.h>
 #include <netinet/in.h>
+#include <stdlib.h>
+#include <string.h>
 
 
 //Defining Colors 
@@ -13,9 +15,88 @@
 #define WHT   "\x1B[37m"
 #define RESET "\x1B[0m"
 
+// Declaring the data structures required
+struct DataPackage_HEADER
+{
+    unsigned short int startID;
+    unsigned char clientID;
+    unsigned short int data;
+    unsigned char segmentNo;
+    unsigned char length;
+} header = {0xFFFF, 0xFF, 0xFFF1, 0x0, 0xFF};
+struct DataPackage_ENDER
+{
+    unsigned short int endID;
+} ender = {0xFFFF};
+struct ACK_PACKAGE
+{
+    unsigned short int startID;
+    unsigned char clientID;
+    unsigned short int ack;
+    unsigned char segmentNo;
+    unsigned short int endID;
+} ack = {0xFFFF, 0xFF, 0xFFF2, 0x0, 0xFFFF};
+struct Reject_PACKAGE
+{
+    unsigned short int startID;
+    unsigned char clientID;
+    unsigned short int reject;
+    unsigned short int rejectCode;
+    unsigned char segmentNo;
+    unsigned short int endID;
+} reject = {0xFFFF, 0xFF, 0xFFF3, 0xFFF4, 0x0, 0xFFFF};
 
+// Displaying Packet Content
+void printPackage()
+{
+    printf(RED "\n************ Package %d ************\n" RESET,
+           header.segmentNo);
+    printf("Packet ID =============\"%#X\"\n", header.startID);
+    printf("Client ID =============\"%#X\"\n", header.clientID);
+    printf("DATA ==================\"%#X\"\n", header.data);
+    printf("Sequence Number =======\"%d\"\n", header.segmentNo);
+    printf("Length of payload =====\"%#X\"\n", header.length);
+    printf("End of Packet ID ======\"%#X\"\n", ender.endID);
+    printf(RED "************ End of Package ************\n\n" RESET);
+}
+void printAck()
+{
+    printf(RED "\n************ Ack %d ************\n" RESET, ack.segmentNo);
+    printf("Packet ID ==================\"%#X\"\n", ack.startID);
+    printf("Client ID ==================\"%#X\"\n", ack.clientID);
+    printf("ACK ========================\"%#X\"\n", ack.ack);
+    printf("Received Sequence Number ===\"%d\"\n", ack.segmentNo);
+    printf("End of Packet ID ===========\"%#X\"\n", ack.endID);
+    printf(RED "************ End of Ack ************\n\n" RESET);
+}
+void printReject()
+{
+    printf(RED "\n************ Reject Package %d ************\n" RESET,
+           reject.segmentNo);
+    printf("Packet ID ===================\"%#X\"\n", reject.startID);
+    printf("Client ID ===================\"%#X\"\n", reject.clientID);
+    printf("REJECT ======================\"%#X\"\n", reject.reject);
+    printf("Reject sub code =============\"%#X\"\n", reject.rejectCode);
+    printf("Received Sequence Number ====\"%d\"\n", reject.segmentNo);
+    printf("End of Packet ID ============\"%#X\"\n", reject.endID);
+    printf(RED "************ End of Reject Package ************\n\n" RESET);
+}
 
-
+// Package variables and info
+void reject_builder(unsigned short int code)
+{
+    reject.startID = 0xFFFF;
+    reject.clientID = header.clientID;
+    reject.reject = 0xFFF3;
+    reject.rejectCode = code;
+    reject.segmentNo = header.segmentNo;
+    reject.endID = 0xFFFF;
+}
+void error(char *msg)
+{
+    perror(msg);
+    exit(1);
+}
 
 char buffer[255];
 char package[1024];
@@ -132,7 +213,7 @@ int main(int argc, char *argv[])
             printf(YEL "Server: Package Rejected. \nError: End of packet missing\n" RESET);
             reject_builder(0xFFF6);
             printReject();
-                bzero(reply, 16);
+            bzero(reply, 16);
             memset(reply, 0, 16);
             memcpy(reply, &reject, sizeof(reject));
             n = sendto(sock,&reply,sizeof(reject),0,(struct sockaddr
