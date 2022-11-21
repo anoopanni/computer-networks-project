@@ -98,7 +98,7 @@ int main(int argc, char**argv)
 	requestPacket = Initialize();
 
     // Reading input file from root location
-	filePointer = fopen("Verification_Database.txt", "rt");
+	filePointer = fopen("input.txt", "rt");
 
 	if(filePointer == NULL)
 	{
