@@ -1,8 +1,12 @@
 #include <sys/socket.h>
+#include <sys/types.h>
 #include <stdio.h>
 #include <netinet/in.h>
+#include <netdb.h>
 #include <stdlib.h>
 #include <string.h>
+#include <arpa/inet.h>
+#include <sys/time.h>
 
 
 //Defining Colors 
