@@ -1,3 +1,7 @@
+// COEN 233 assignment1
+// Name : Anoop Shivayogi
+// Student ID : W1648523
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/socket.h>
