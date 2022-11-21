@@ -275,7 +275,16 @@ int main(int argc, char *argv[]){
     printPackage();
     send_package();
 
-    
+    //package 5:test end of packet missing error
+    printf(BLU "Package 5: Simulating end of packet missing error\n" RESET);
+    bzero(payload, 256);
+    memcpy(payload, "Payload of a package.\n", 34);
+    package_builder(2, payload);
+    ender.endID = 0xFFF0;
+    memcpy(package + sizeof(header) + strlen(payload), &ender, 2);
+    printf(GRN "Package altered: end of packet ID changed " RESET);
+    printPackage();
+    send_package();
 
     return 0;
 }
