@@ -90,9 +90,9 @@ void printReject()
 int sock;
 struct sockaddr_in server;  //<netinet/in.h>
 struct sockaddr_in from; 
-struct hostent *hp;
+struct hostent *hp;   //  <netdb.h>
 socklen_t length; // <socket.h>
-struct timeval timeout;
+struct timeval timeout; //Inbuilt
 int packageNo;
 char payload[256];
 char package[264];
