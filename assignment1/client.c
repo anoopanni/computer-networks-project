@@ -217,16 +217,16 @@ int main(int argc, char *argv[]){
     }
     // bcopy(*s1, *s2, size_t n)
     bcopy((char *)hp->h_addr, (char *)&server.sin_addr, hp->h_length);
-    //short integer from host byte order to network byte order
+    //short integer from host byte order to network byte order, Host to network short
     server.sin_port = htons(atoi(argv[2]));   //atoi converts str to integer
     length = sizeof(struct sockaddr_in);
     //setting timer
     timeout.tv_sec = 3; // 3 seconds
     timeout.tv_usec = 0;
-    //To set options at the socket level, specify the level argument as SOL_SOCKET
+    //To set options at the socket level, specify the level argument as SOL_SOCKET for socket level
     //Sets the timeout value that specifies the maximum amount of time an input function waits until it completes. 
     //It accepts a timeval structure with the number of seconds and microseconds specifying the limit on how long 
-    //to wait for an input operation to complete
+    //to wait for an input operation to complete, for eg, recieve operation has been blocked for this no of secs
     setsockopt(sock, SOL_SOCKET, SO_RCVTIMEO, (char *)&timeout, sizeof(timeout));
     //sending 5 error-free packages
     printf(CYN "\n\nTest1: Send 5 error-free packages in sequence\n\n" RESET);
