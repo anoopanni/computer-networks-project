@@ -215,12 +215,13 @@ int main(int argc, char *argv[]){
     {
         error("Client: Unknown host.\n");
     }
+    // bcopy(*s1, *s2, size_t n)
     bcopy((char *)hp->h_addr, (char *)&server.sin_addr, hp->h_length);
     //short integer from host byte order to network byte order
     server.sin_port = htons(atoi(argv[2]));   //atoi converts str to integer
     length = sizeof(struct sockaddr_in);
     //setting timer
-    timeout.tv_sec = 3;
+    timeout.tv_sec = 3; // 3 seconds
     timeout.tv_usec = 0;
     //To set options at the socket level, specify the level argument as SOL_SOCKET
     //Sets the timeout value that specifies the maximum amount of time an input function waits until it completes. 
